@@ -1,13 +1,14 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+
+.custom-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+    background-color: #1B84FF; /* Change to the color you prefer */
+    color: white; /* Change to the color you prefer / / Change to the color you prefer / / Change to the color you prefer */
+    border-style: solid; /* Change to the color you prefer */
+    border-radius: 50%; /* Change to the color you prefer */
+    padding: 2px;
+    font-weight: bold;
+    opacity: .7;
 }

@@ -15,6 +15,17 @@
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="shortcut icon" href="%PUBLIC_URL%/assets/media/logos/favicon.ico" />
+	<!--begin::Fonts(mandatory for all pages)-->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
+	<!--end::Fonts-->
+	<!--begin::Vendor Stylesheets(used for this page only)-->
+	<link href="%PUBLIC_URL%/assets/plugins/custom/fullcalendar/fullcalendar.bundle.css" rel="stylesheet" type="text/css" />
+	<link href="%PUBLIC_URL%/assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
+	<!--end::Vendor Stylesheets-->
+	<!--begin::Global Stylesheets Bundle(mandatory for all pages)-->
+	<link href="%PUBLIC_URL%/assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
+	<link href="%PUBLIC_URL%/assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -26,18 +37,34 @@
     -->
     <title>React App</title>
   </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+  <body >
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+  
+    <script src="%PUBLIC_URL%/assets/plugins/global/plugins.bundle.js"></script>
+	<script src="%PUBLIC_URL%/assets/js/scripts.bundle.js"></script>
+	<!--end::Global Javascript Bundle-->
+	<!--begin::Vendors Javascript(used for this page only)-->
+	<script src="%PUBLIC_URL%/assets/plugins/custom/fullcalendar/fullcalendar.bundle.js"></script>
+	<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+	<script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+	<script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
+	<script src="https://cdn.amcharts.com/lib/5/radar.js"></script>
+	<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+	<script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+	<script src="https://cdn.amcharts.com/lib/5/geodata/worldLow.js"></script>
+	<script src="https://cdn.amcharts.com/lib/5/geodata/continentsLow.js"></script>
+	<script src="https://cdn.amcharts.com/lib/5/geodata/usaLow.js"></script>
+	<script src="https://cdn.amcharts.com/lib/5/geodata/worldTimeZonesLow.js"></script>
+	<script src="https://cdn.amcharts.com/lib/5/geodata/worldTimeZoneAreasLow.js"></script>
+	<script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+	<script src="%PUBLIC_URL%/assets/js/widgets.bundle.js"></script>
+	<script src="%PUBLIC_URL%/assets/js/custom/widgets.js"></script>
+	<script src="%PUBLIC_URL%/assets/js/custom/apps/chat/chat.js"></script>
+	<script src="%PUBLIC_URL%/assets/js/custom/utilities/modals/upgrade-plan.js"></script>
+	<script src="%PUBLIC_URL%/assets/js/custom/utilities/modals/create-app.js"></script>
+	<script src="%PUBLIC_URL%/assets/js/custom/utilities/modals/new-target.js"></script>
+	<script src="%PUBLIC_URL%/assets/js/custom/utilities/modals/users-search.js"></script>
   </body>
 </html>
