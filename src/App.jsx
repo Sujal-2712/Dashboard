@@ -12,7 +12,9 @@ import Surat from './components/Surat';
 import GenerateCode from './pages/GenerateCode';
 import Layout from './components/Layout';
 import ShowDetails from './components/ShowDetails';
+import ShowDetails_Surat from './components/ShowDetails_Surat';
 import RFID from './components/RFID';
+import RFID_Surat from './components/RFID_Surat';
 
 function App() {
   return (
@@ -24,8 +26,10 @@ function App() {
           <Route path="/user/surat" element={<Surat />} />
           <Route path="/user/GenerateCode" element={<GenerateCode />} />
           <Route path="/user/AddWheelCompany" element={<AddWheelCompany />} />
-          <Route path="/user/showdetails" element={<ShowDetails/>} />
-          <Route path="/user/rfid" element={<RFID/>} />
+          <Route path="/user/showdetails" element={<ShowDetails />} />
+          <Route path="/user/showdetails/surat" element={<ShowDetails_Surat />} />
+          <Route path="/user/rfid" element={<RFID />} />
+          <Route path="/user/rfid/surat" element={<RFID_Surat />} />
         </Route>
       </Routes>
     </BrowserRouter>

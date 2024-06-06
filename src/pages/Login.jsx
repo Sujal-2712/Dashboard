@@ -1,15 +1,13 @@
 import { useState, useEffect } from 'react';
-import { loginFields } from "../constants/formFields";
 import Input from "./../components/Input";
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie'; // Correct import for cookies
 
-const fields = loginFields;
-let fieldsState = {};
-fields.forEach(field => fieldsState[field.name] = '');
-
 export default function Login() {
-    const [loginState, setLoginState] = useState(fieldsState);
+    const [loginState, setLoginState] = useState({
+        username:"",
+        password:""
+    });
     const [isLogin, setIsLogin] = useState(false);
     const navigate = useNavigate();
 
@@ -38,10 +36,10 @@ export default function Login() {
         }
         else {
             document.getElementById('error-msg').innerText = "Invalid Username or Password";
-            setLoginState({
-                email: '',
+            setLoginState(prevState => ({
+                ...prevState,
                 password: ''
-            });
+            }));
         }
     }
 
@@ -52,93 +50,48 @@ export default function Login() {
     }, [isLogin, navigate]);
 
     return (
-        <div className='bg-slate-600'>
-
-            <div className='w-1/4 mx-auto flex justify-center items-center h-screen'>
-
-                <form className="form w-100 bg-slate-800 p-7 rounded-xl" novalidate="novalidate" id="kt_sign_in_form" onSubmit={handleSubmit}>
-
-                    <div className="text-center mb-11 mt-10">
-                        <div className="text-gray-500 fw-semibold fs-6 text-3xl">
-                            <img src="https://arjunbala.com/nishthadashboarddemo/NisthaDashboard/Sales/images/auth-bg/Final%20Yantra%20Logo.png" className='h-10 w-full'></img>
-                        </div>
-
-                    </div>
-                    <div className="row g-3 mb-9">
-
-                        <div className="col-md-12">
-
-                            <a href="#"
-                                className="btn btn-flex btn-outline text-white hover:bg-slate-600 flex-center text-nowrap w-100">
-                                <img alt="Logo" src='https://www.svgrepo.com/show/380993/google-logo-search-new.svg'
-                                    className="h-15px me-3" />
-                                Sign in with Google
-                            </a>
-                        </div>
-
-                    </div>
-
-
-                    <div className="separator separator-content my-10">
-                        <span className="w-125px text-gray-500 fw-semibold fs-7">Or with username</span>
-                    </div>
-
-
-                    {fields.map(field =>
-                        <Input
-                            key={field.id}
-                            handleChange={handleChange}
-                            value={loginState[field.id]}
-                            labelText={field.labelText}
-                            labelFor={field.labelFor}
-                            id={field.id}
-                            name={field.name}
-                            type={field.type}
-                            isRequired={field.isRequired}
-                            placeholder={field.placeholder}
-                        />
-                    )}
-                    <p id='error-msg' className='text-red-500 text-lg font-semibold text-center my-5'></p>
-
-                
-                    <div className="d-grid mb-10">
-                        <button type="submit" id="kt_sign_in_submit" className="btn btn-primary">
-                            Sign In
-                        </button>
-                    </div>
-
-
-
+        <div className='bg-gray-900 min-h-screen flex items-center justify-center'>
+            <div className='bg-gray-800 p-10 rounded-lg shadow-xl w-96'>
+                <div className='text-center mb-8'>
+                    <img src="https://arjunbala.com/nishthadashboarddemo/NisthaDashboard/Sales/images/auth-bg/Final%20Yantra%20Logo.png" className='h-10 w-full mb-4' alt='Logo' />
+                    <a href="#"
+                       className="inline-block mt-4 bg-gray-700 text-white border border-gray-600 rounded-full px-4 py-2 hover:bg-gray-600">
+                        <img alt="Google logo" src='https://www.svgrepo.com/show/380993/google-logo-search-new.svg' className='inline-block h-5 mr-2' />
+                        Sign in with Google
+                    </a>
+                </div>
+                <div className='text-center mb-6'>
+                    <span className='text-gray-400'>Or with username</span>
+                </div>
+                <form className='space-y-6' onSubmit={handleSubmit}>
+                    <Input
+                        handleChange={handleChange}
+                        value={loginState.username}
+                        labelText='Username'
+                        labelFor='username'
+                        id='username'
+                        name='username'
+                        type='text'
+                        isRequired={true}
+                        placeholder='Enter your username'
+                    />
+                    <Input
+                        handleChange={handleChange}
+                        value={loginState.password}
+                        labelText='Password'
+                        labelFor='password'
+                        id='password'
+                        name='password'
+                        type='password'
+                        isRequired={true}
+                        placeholder='Enter your password'
+                    />
+                    <p id='error-msg' className='text-red-500 text-sm font-semibold text-center'></p>
+                    <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300">
+                        Sign In
+                    </button>
                 </form>
-
             </div>
         </div>
-        // <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-        //     <div className="-space-y-px">
-        //         {fields.map(field =>
-        //             <Input
-        //                 key={field.id}
-        //                 handleChange={handleChange}
-        //                 value={loginState[field.id]}
-        //                 labelText={field.labelText}
-        //                 labelFor={field.labelFor}
-        //                 id={field.id}
-        //                 name={field.name}
-        //                 type={field.type}
-        //                 isRequired={field.isRequired}
-        //                 placeholder={field.placeholder}
-        //             />
-        //         )}
-
-        //     </div>
-
-        //     <p id='error-msg' className='text-red-500 font-semibold text-center mt-1'></p>
-
-        //     <input
-        //         className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-slate-800 hover:bg-slate-700 cursor-pointer mt-10"
-        //         type='submit'
-        //         value="Login"
-        //     />
-        // </form>
     );
 }

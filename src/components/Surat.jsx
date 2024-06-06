@@ -113,10 +113,10 @@ const Surat = () => {
 
             <div className='h-fit'>
                 <div className='grid lg:grid-cols-3 grid-cols-1 p-2 gap-1 h-fit'>
-                    <Link to="/user/showdetails"><CardStatus total={blankCard} setTotal={setblankCard} endpoint={'/progress/blank_card_stock'} text={"Total Cards"} /></Link>
+                    <Link to="/user/showdetails/surat"><CardStatus total={blankCard} setTotal={setblankCard} endpoint={'/progress/blank_card_stock_surat'} text={"Total Cards"} /></Link>
 
 
-                    <Link to="/user/rfid"><CardStatus text={"Total Sales"} total={updatedStock} setTotal={setupdatedStock} endpoint={'/progress/wheelmaster'} /></Link>
+                    <Link to="/user/rfid/Surat"><CardStatus text={"Total Sales"} total={updatedStock} setTotal={setupdatedStock} endpoint={'/progress/wheelmaster_surat'} /></Link>
 
 
                     <CardStatus total={Wheelprogress} setTotal={setWheelProgress} endpoint={`/progress/wheel_type?number=${WheelprogressForm.number}&interval=${WheelprogressForm.interval}`} text={`Total Progress in last ${WheelprogressForm.interval}(Number of Cards)`} enableInput={true} setProgressForm={setWheelProgressForm} progressForm={WheelprogressForm} />

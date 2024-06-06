@@ -11,8 +11,8 @@ const RFID = () => {
   const [data, setData] = useState([]);
   const fetchBlankCardData = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/wheelmaster/wheeltype', {
-        withCredentials: true
+      const response = await axios.get('http://localhost:3001/wheelmaster/wheeltype/rajkot', {
+        withCredentials: true,
       })
       const result = response.data;
       console.log(result);

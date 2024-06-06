@@ -119,7 +119,7 @@ const AddNewCompany = ({ addCompany }) => {
                     <div className="flex items-center justify-center min-h-screen">
                         <div className="fixed inset-0 bg-gray-500 opacity-75"></div>
 
-                        <div className="bg-slate-200 rounded-lg z-20">
+                        <div className="bg-slate-200 w-[90%] lg:w-[30%] rounded-lg z-20">
 
                             <div className='heading border-b-2 border-black flex justify-between items-center p-4'>
                                 <h3 className='text-2xl'>Add New Company</h3>

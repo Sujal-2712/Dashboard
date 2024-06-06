@@ -12,7 +12,7 @@ import axios from 'axios';
 import "primereact/resources/themes/lara-light-indigo/theme.css"
 import "primereact/resources/primereact.min.css"
 
-const ShowDetials = (props) => {
+const ShowDetails_Surat = (props) => {
   const [data, setData] = useState([]);
   const [updateFormData, setUpdateFormData] = useState({});
   const [addFormData, setAddFormData] = useState({
@@ -32,7 +32,7 @@ const ShowDetials = (props) => {
 
   const fetchBlankCardData = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/blank_card_stock/showDetials/rajkot', {
+      const response = await axios.get('http://localhost:3001/blank_card_stock/showDetials/surat', {
         withCredentials: true,
       })
       const result = response.data;
@@ -93,7 +93,6 @@ const ShowDetials = (props) => {
 
   const handleAddChange = (e) => {
     const { name, value } = e.target;
-    // Update the form data for adding a new entry
     setAddFormData({
       ...addFormData,
       [name]: value
@@ -106,6 +105,7 @@ const ShowDetials = (props) => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    // setUpdateFormData({});
     const { valid, errors } = validateForm(updateFormData);
 
     if (!valid) {
@@ -120,7 +120,7 @@ const ShowDetials = (props) => {
         {
           withCredentials: true,
           params:{
-            table:""
+            table:"_surat"
           }
         }
       );
@@ -134,6 +134,7 @@ const ShowDetials = (props) => {
 
   const handleAdd = async (e) => {
     e.preventDefault();
+    setAddFormData({});
     const { valid, errors } = validateForm(addFormData);
 
     if (!valid) {
@@ -142,9 +143,10 @@ const ShowDetials = (props) => {
       return;
     }
     try {
-      const response = await axios.post('http://localhost:3001/blank_card_stock/addNewCard/rajkot', addFormData, {
+      const response = await axios.post('http://localhost:3001/blank_card_stock/addNewCard/surat', addFormData, {
         withCredentials: true
       })
+      console.log(response);
       toast.success('Card Details Added Successfully!!');
       setShowAddModal(false);
       fetchBlankCardData();
@@ -169,7 +171,7 @@ const ShowDetials = (props) => {
       const response = await axios.delete(`http://localhost:3001/blank_card_stock/deleteCard/${deleteItemId}`, {
         withCredentials: true,
         params:{
-          table:""
+            table:"_surat"
         }
       });
       fetchBlankCardData();
@@ -265,7 +267,7 @@ const ShowDetials = (props) => {
         )}
 
         {showEditModal && (
-          <div className="fixed z-10 inset-0 overflow-y-auto">x
+          <div className="fixed z-10 inset-0 overflow-y-auto">
             <div className="flex items-center   justify-center min-h-screen">
               <div className="fixed inset-0 bg-gray-500 opacity-75"></div>
 
@@ -318,7 +320,7 @@ const ShowDetials = (props) => {
 
 
         {showAddModal && (
-          <div className="fixed z-10 inset-0 overflow-y-auto">
+          <div className="fixed z-10 inset-0 overflow-y-auto">x
             <div className="flex items-center   justify-center min-h-screen">
               <div className="fixed inset-0 bg-gray-500 opacity-75"></div>
 
@@ -380,4 +382,4 @@ const ShowDetials = (props) => {
   )
 }
 
-export default ShowDetials
+export default ShowDetails_Surat

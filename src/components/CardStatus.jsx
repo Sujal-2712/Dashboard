@@ -31,7 +31,7 @@ const CardStatus = (props) => {
 
                         <div className='flex justify-between'>
 
-                            <div class="fs-2hx fw-bold text-white me-2 lh-1 ls-n2">{props.total}</div>
+                            <div class="fs-2hx fw-bold text-white me-2 lh-1 ls-n2">{props.total > 0 ? props.total : 0}</div>
                             <div className='input flex flex-row flex-end items-center gap-1' >
                                 {props.enableInput ? <>
                                     <input type="number" value={props.progressForm.number} class=" rounded-md border-0 w-1/4 px-1 focus:outline-none focus:ring focus:border-blue-300" onChange={(event)=>{
