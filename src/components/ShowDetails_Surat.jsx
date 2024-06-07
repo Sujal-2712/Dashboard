@@ -11,17 +11,19 @@ import { IoMdClose } from "react-icons/io";
 import axios from 'axios';
 import "primereact/resources/themes/lara-light-indigo/theme.css"
 import "primereact/resources/primereact.min.css"
+import Select from 'react-select';
 
 const ShowDetails_Surat = (props) => {
   const [data, setData] = useState([]);
   const [updateFormData, setUpdateFormData] = useState({});
-  const [addFormData, setAddFormData] = useState({
+  const [FormData, setFormData] = useState({
     // purchase_id: "",
+    inward_type: "Rajkot",
+    sell_date: "",
     no_of_card: "",
-    purchase_date: "",
-    receive_by: "",
-    total_stock: 0,
-    inward_type: 1
+    purchase_by: "",
+    companyName : "",
+    companyCode : ""
   }
   );
   const [showEditModal, setShowEditModal] = useState(false);
@@ -36,7 +38,7 @@ const ShowDetails_Surat = (props) => {
         withCredentials: true,
       })
       const result = response.data;
-      console.log(result);
+      console.log("This is Dataa" ,result);
       setData(result);
     } catch (error) {
       console.log(error);
@@ -69,13 +71,24 @@ const ShowDetails_Surat = (props) => {
       valid = false;
     }
 
-    if (!formData.purchase_date) {
-      newErrors.purchase_date = 'Date is required';
+    if (!formData.sell_date) {
+      newErrors.sell_date = 'Date is required';
       valid = false;
     }
 
-    if (!formData.receive_by) {
-      newErrors.receive_by = "Receiver's Name is required";
+    if (!formData.purchase_by) {
+      
+      newErrors.sell_by = "Receiver's Name is required";
+      valid = false;
+    }
+
+    if(!formData.companyName) {
+      newErrors.companyName = "Company Name is required";
+      valid = false;
+    }
+
+    if(!formData.companyCode){
+      newErrors.companyCode = "Company Code is required";
       valid = false;
     }
 
@@ -93,8 +106,8 @@ const ShowDetails_Surat = (props) => {
 
   const handleAddChange = (e) => {
     const { name, value } = e.target;
-    setAddFormData({
-      ...addFormData,
+    setFormData({
+      ...FormData,
       [name]: value
     });
   };
@@ -105,7 +118,6 @@ const ShowDetails_Surat = (props) => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    // setUpdateFormData({});
     const { valid, errors } = validateForm(updateFormData);
 
     if (!valid) {
@@ -129,25 +141,26 @@ const ShowDetails_Surat = (props) => {
       fetchBlankCardData();
     } catch (error) {
       console.error('Error:', error);
+      toast.error("Something went wrong!");
     }
   };
 
   const handleAdd = async (e) => {
     e.preventDefault();
-    setAddFormData({});
-    const { valid, errors } = validateForm(addFormData);
-
+    
+    console.log(FormData);
+    const { valid, errors } = validateForm(FormData);
     if (!valid) {
       setErrors(errors);
       toast.error("Please fill valid data!");
       return;
     }
     try {
-      const response = await axios.post('http://localhost:3001/blank_card_stock/addNewCard/surat', addFormData, {
+      const response = await axios.post('http://localhost:3001/blank_card_stock/addNewCard/surat', FormData, {
         withCredentials: true
       })
-      console.log(response);
       toast.success('Card Details Added Successfully!!');
+      setFormData({});
       setShowAddModal(false);
       fetchBlankCardData();
     } catch (error) {
@@ -182,6 +195,57 @@ const ShowDetails_Surat = (props) => {
       console.error('Error deleting item:', error);
     }
   };
+
+
+  const [companies, setCompanies] = useState([]);
+  const [selectedCompany, setSelectedCompany] = useState({
+    value: null,
+    label: null,
+    index: null,
+  });
+  const [companyCode , setCompanyCode] = useState([]);
+
+    async function getWheelInfo() {
+        try {
+            const response = await fetch('http://localhost:3001/companymaster/wheel_company', { credentials: 'include' });
+            const data = await response.json();
+            const formattedData = data.map(item => ({ value: item.wheel_company_name, label: item.wheel_company_name , index : item.wheel_company_id }));
+            setCompanies(formattedData);
+        } catch (error) {
+            console.error('Error fetching wheel information:', error);
+        }
+    }
+
+    async function getWheelTypeByCompany() {
+      if (!selectedCompany.index) return;
+      try {
+        const response = await fetch(`http://localhost:3001/wheeltype/wheel_type/${selectedCompany.index}`, { credentials: 'include' });
+        const data = await response.json();
+        console.log(data);
+        setCompanyCode(data);
+      } catch (error) {
+        console.error('Error fetching wheel information:', error);
+      }
+    }
+
+    
+    useEffect(() => {
+      getWheelInfo();
+    }, []);
+    
+    useEffect(() => {
+        console.log("Fetching")
+        getWheelTypeByCompany();
+    }, [selectedCompany]);
+
+    const handleChange = (selectedOption) => {
+      setFormData({
+        ...FormData,
+        companyName: selectedOption.value
+      });
+      setSelectedCompany(selectedOption);
+    };
+
   return (
     <div>
 
@@ -234,7 +298,8 @@ const ShowDetails_Surat = (props) => {
 
         </DataTable>
 
-
+        
+        {/* delete model */}
         {showDeleteModal && (
           <div className="fixed z-10 inset-0 overflow-y-auto">
             <div className="flex items-center justify-center min-h-screen">
@@ -319,6 +384,7 @@ const ShowDetails_Surat = (props) => {
         )}
 
 
+        {/* from add product */}
         {showAddModal && (
           <div className="fixed z-10 inset-0 overflow-y-auto">x
             <div className="flex items-center   justify-center min-h-screen">
@@ -335,27 +401,61 @@ const ShowDetails_Surat = (props) => {
                   <form onSubmit={handleAdd} className="mx-auto text-lg">
 
                     <div className="grid grid-cols-1 gap-3">
+
                       <label className="block">
                         <span className="text-gray-700">Inward Type</span>
-                        <select name="purchase_id" value={addFormData.inward_type} onChange={handleAddChange} className="mt-1 p-2 block w-full rounded border-gray-300">
-                          <option value="purchase">Purchase</option>
+                        <select name="inward_type" value={FormData.inward_type} onChange={handleAddChange} className="mt-1 p-2 block w-full rounded border-gray-300">
+                          <option value="rajkot">From Rajkot</option>
                         </select>
-                        {errors.inward_type && <p className="text-red-500 text-xs mt-1">{errors.inward_type}</p>}
+                        {/* {errors.inward_type && <p className="text-red-500 text-xs mt-1">{errors.inward_type}</p>} */}
                       </label>
+                       
+                      <label className="block">
+                        <span className="text-gray-700">Date</span>
+                        <input type="date" name="sell_date" value={FormData.purchase_date} onChange={handleAddChange} className="mt-1 p-2 block w-full rounded border-gray-300" />
+                        {errors.sell_date && <p className="text-red-500 text-xs mt-1">{errors.sell_date}</p>}
+                      </label>
+
                       <label className="block">
                         <span className="text-gray-700">Number Of Cards</span>
-                        <input type="number" name="no_of_card" value={addFormData.no_of_card} onChange={handleAddChange} className="mt-1 p-2 block w-full rounded border-gray-300" />
+                        <input type="number" name="no_of_card" value={FormData.no_of_card} onChange={handleAddChange} className="mt-1 p-2 block w-full rounded border-gray-300" />
                         {errors.no_of_card && <p className="text-red-500 text-xs mt-1">{errors.no_of_card}</p>}
                       </label>
+                     
                       <label className="block">
-                        <span className="text-gray-700">Purchase Date</span>
-                        <input type="date" name="purchase_date" value={addFormData.purchase_date} onChange={handleAddChange} className="mt-1 p-2 block w-full rounded border-gray-300" />
-                        {errors.purchase_date && <p className="text-red-500 text-xs mt-1">{errors.purchase_date}</p>}
+                        <span className="text-gray-700">Card Sell By</span>
+                        <input type="text" name="sell_by" value={FormData.receive_by} onChange={handleAddChange} className="mt-1 p-2 block w-full rounded border-gray-300" />
+                        {errors.sell_by && <p className="text-red-500 text-xs mt-1">{errors.sell_by}</p>}
                       </label>
-                      <label className="block">
-                        <span className="text-gray-700">Card Received By</span>
-                        <input type="text" name="receive_by" value={addFormData.receive_by} onChange={handleAddChange} className="mt-1 p-2 block w-full rounded border-gray-300" />
-                        {errors.receive_by && <p className="text-red-500 text-xs mt-1">{errors.receive_by}</p>}
+
+                      <label htmlFor="" className='flex gap-4'>
+
+                        <div className='w-1/2'>
+                          <span className="text-gray-700">Company</span>
+                          <Select
+                            id="wheelCompany"
+                            name="companyName"
+                            value={companies.find(option => option.value === FormData.companyName)}
+                            onChange={(selectedOption) => handleChange(selectedOption)}
+                            options={companies}
+                            isSearchable
+                            // styles={customStyles}
+                           />
+                          {errors.companyName && <p className="text-red-500 text-xs mt-1">{errors.companyName}</p>}
+                        </div>
+
+                        <div className='w-1/2'>
+                          <span className="text-gray-700">Company Code</span>
+                          <select  name="companyCode" value={FormData.receive_by} onChange={handleAddChange} className="mt-1 p-2 block w-full rounded border-gray-300">
+                          { companyCode.length===0 ? <option value={""}>Not Found</option> :
+                              companyCode.map((item) => {
+                                return (<option value={item.wheel_type_name}>{item.wheel_type_name}</option>)
+                              })
+                          }
+                          </select>
+                          {errors.companyCode && <p className="text-red-500 text-xs mt-1">{errors.companyCode}</p>}
+                        </div>
+
                       </label>
                     </div>
 
@@ -382,4 +482,4 @@ const ShowDetails_Surat = (props) => {
   )
 }
 
-export default ShowDetails_Surat
+export default ShowDetails_Surat;

@@ -12,21 +12,21 @@ import axios from 'axios';
 import "primereact/resources/themes/lara-light-indigo/theme.css"
 import "primereact/resources/primereact.min.css"
 
+
 const ShowDetials = (props) => {
   const [data, setData] = useState([]);
-  const [updateFormData, setUpdateFormData] = useState({});
-  const [addFormData, setAddFormData] = useState({
-    // purchase_id: "",
+  // const [updateFormData, setUpdateFormData] = useState({});
+  const [formData, setFormData] = useState({
     no_of_card: "",
     purchase_date: "",
     receive_by: "",
     total_stock: 0,
-    inward_type: 1
-  }
-  );
-  const [showEditModal, setShowEditModal] = useState(false);
+    inward_type: "purchase"
+  });
+  const [showModal, setShowModal] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showAddModal, setShowAddModal] = useState(false);
+  // const [showModal, setShoModal] = useState(false);
   const [errors, setErrors] = useState({});
   const [deleteItemId, setDeleteItemId] = useState(null);
 
@@ -82,82 +82,83 @@ const ShowDetials = (props) => {
     return { valid, errors: newErrors };
   };
 
-  const handleUpdateChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setUpdateFormData(prevState => ({
+    setFormData(prevState => ({
       ...prevState,
       [name]: value
     }));
-    console.log(updateFormData)
-  };
-
-  const handleAddChange = (e) => {
-    const { name, value } = e.target;
-    // Update the form data for adding a new entry
-    setAddFormData({
-      ...addFormData,
-      [name]: value
-    });
   };
 
   const closeDeleteModal = (e) => {
     setShowDeleteModal(false);
   }
 
-  const handleUpdate = async (e) => {
+  // const handleUpdate = async (e) => {
+  //   e.preventDefault();
+  //   const { valid, errors } = validateForm(updateFormData);
+
+  //   if (!valid) {
+  //     setErrors(errors);
+  //     toast.error("Please fill valid data!");
+  //     return;
+  //   }
+  //   try {
+  //     const response = await axios.patch(
+  //       `http://localhost:3001/blank_card_stock/update/${updateFormData.purchase_id}`,
+  //       updateFormData,
+  //       {
+  //         withCredentials: true,
+  //         params:{
+  //           table:""
+  //         }
+  //       }
+  //     );
+  //     toast.success('Card Details Updated Successfully!!');
+  //     setShowModal(false);
+  //     fetchBlankCardData();
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //   }
+  // };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const { valid, errors } = validateForm(updateFormData);
+    const { valid, errors } = validateForm(formData);
 
     if (!valid) {
       setErrors(errors);
       toast.error("Please fill valid data!");
       return;
     }
+
     try {
-      const response = await axios.patch(
-        `http://localhost:3001/blank_card_stock/update/${updateFormData.purchase_id}`,
-        updateFormData,
-        {
-          withCredentials: true,
-          params:{
-            table:""
-          }
-        }
-      );
-      toast.success('Card Details Updated Successfully!!');
-      setShowEditModal(false);
+      if (isEditMode) {
+        await axios.patch(
+          `http://localhost:3001/blank_card_stock/update/${formData.purchase_id}`,
+          formData,
+          { withCredentials: true, params: { table: "" } }
+        );
+        toast.success('Card Details Updated Successfully!!');
+      } else {
+        await axios.post('http://localhost:3001/blank_card_stock/addNewCard/rajkot', formData, { withCredentials: true });
+        toast.success('Card Details Added Successfully!!');
+      }
+      setShowModal(false);
       fetchBlankCardData();
     } catch (error) {
       console.error('Error:', error);
     }
   };
 
-  const handleAdd = async (e) => {
-    e.preventDefault();
-    const { valid, errors } = validateForm(addFormData);
-
-    if (!valid) {
-      setErrors(errors);
-      toast.error("Please fill valid data!");
-      return;
-    }
-    try {
-      const response = await axios.post('http://localhost:3001/blank_card_stock/addNewCard/rajkot', addFormData, {
-        withCredentials: true
-      })
-      toast.success('Card Details Added Successfully!!');
-      setShowAddModal(false);
-      fetchBlankCardData();
-    } catch (error) {
-      console.log("Error", error);
-    }
-  }
 
   const handleEdit = (purchase_id) => {
     const index = data.findIndex((entry) => entry.purchase_id === purchase_id);
-    setShowEditModal(true);
-    setUpdateFormData(data[index]);
-    console.log(updateFormData)
+    const purchaseDate = new Date(data[index].purchase_date).toISOString().split('T')[0]; // Convert date to YYYY-MM-DD format
+    data[index].purchase_date = purchaseDate;
+    setFormData(data[index]);
+    setIsEditMode(true);
+    setShowModal(true);
   };
 
   const handleDelete = (purchase_id) => {
@@ -168,8 +169,8 @@ const ShowDetials = (props) => {
     try {
       const response = await axios.delete(`http://localhost:3001/blank_card_stock/deleteCard/${deleteItemId}`, {
         withCredentials: true,
-        params:{
-          table:""
+        params: {
+          table: ""
         }
       });
       fetchBlankCardData();
@@ -264,60 +265,7 @@ const ShowDetials = (props) => {
           </div>
         )}
 
-        {showEditModal && (
-          <div className="fixed z-10 inset-0 overflow-y-auto">x
-            <div className="flex items-center   justify-center min-h-screen">
-              <div className="fixed inset-0 bg-gray-500 opacity-75"></div>
-
-              <div className="bg-slate-200 lg:w-[30%] w-[80%] border-black border-2 rounded-lg z-20">
-
-                <div className='heading border-b-2 border-black flex justify-between items-center p-4'>
-                  <h3 className='text-2xl'>Edit Card Details</h3>
-                  <button onClick={() => setShowEditModal(false)} className="text-xl"><IoMdClose /></button>
-                </div>
-
-                <main className='p-4'>
-                  <form onSubmit={handleUpdate} className="mx-auto text-lg">
-
-                    <div className="grid grid-cols-1 gap-3">
-                      <label className="block">
-                        <span className="text-gray-700">Inward Type</span>
-                        <select name="purchase_id" value={updateFormData.inward_type} onChange={handleUpdateChange} className="mt-1 p-2 block w-full rounded border-gray-300">
-                          <option value="purchase">Purchase</option>
-                        </select>
-                        {errors.inward_type && <p className="text-red-500 text-xs mt-1">{errors.inward_type}</p>}
-                      </label>
-                      <label className="block">
-                        <span className="text-gray-700">Number Of Cards</span>
-                        <input type="number" name="no_of_card" value={updateFormData.no_of_card} onChange={handleUpdateChange} className="mt-1 p-2 block w-full rounded border-gray-300" />
-                        {errors.no_of_card && <p className="text-red-500 text-xs mt-1">{errors.no_of_card}</p>}
-                      </label>
-                      <label className="block">
-                        <span className="text-gray-700">Purchase Date</span>
-                        <input type="date" name="purchase_date" value={updateFormData.purchase_date} onChange={handleUpdateChange} className="mt-1 p-2 block w-full rounded border-gray-300" />
-                        {errors.purchase_date && <p className="text-red-500 text-xs mt-1">{errors.purchase_date}</p>}
-                      </label>
-                      <label className="block">
-                        <span className="text-gray-700">Card Received By</span>
-                        <input type="text" name="receive_by" value={updateFormData.receive_by} onChange={handleUpdateChange} className="mt-1 p-2 block w-full rounded border-gray-300" />
-                        {errors.receive_by && <p className="text-red-500 text-xs mt-1">{errors.receive_by}</p>}
-                      </label>
-                    </div>
-
-                    <div className="mt-6 flex justify-end">
-                      <button type="submit" className="bg-blue-500 text-white px-7 py-3  rounded hover:bg-blue-600">Update Card</button>
-                    </div>
-                  </form>
-                </main>
-
-
-              </div>
-            </div>
-          </div>
-        )}
-
-
-        {showAddModal && (
+        {showModal && (
           <div className="fixed z-10 inset-0 overflow-y-auto">
             <div className="flex items-center   justify-center min-h-screen">
               <div className="fixed inset-0 bg-gray-500 opacity-75"></div>
@@ -325,40 +273,42 @@ const ShowDetials = (props) => {
               <div className="bg-slate-200 lg:w-[30%] w-[80%] border-black border-2 rounded-lg z-20">
 
                 <div className='heading border-b-2 border-black flex justify-between items-center p-4'>
-                  <h3 className='text-2xl'>Add New Cards</h3>
-                  <button onClick={() => setShowAddModal(false)} className="text-xl"><IoMdClose /></button>
+                  <h2 className="text-2xl font-bold mb-4">{isEditMode ? 'Edit Card Details' : 'Add New Card'}</h2>
+                  <button onClick={() => setShowModal(false)} className="text-xl"><IoMdClose /></button>
                 </div>
 
                 <main className='p-4'>
-                  <form onSubmit={handleAdd} className="mx-auto text-lg">
+                  <form onSubmit={handleSubmit} className="mx-auto text-lg">
 
                     <div className="grid grid-cols-1 gap-3">
                       <label className="block">
                         <span className="text-gray-700">Inward Type</span>
-                        <select name="purchase_id" value={addFormData.inward_type} onChange={handleAddChange} className="mt-1 p-2 block w-full rounded border-gray-300">
+                        <select name="purchase_id" value={formData.inward_type} onChange={handleChange} className="mt-1 p-2 block w-full rounded border-gray-300">
                           <option value="purchase">Purchase</option>
                         </select>
                         {errors.inward_type && <p className="text-red-500 text-xs mt-1">{errors.inward_type}</p>}
                       </label>
                       <label className="block">
                         <span className="text-gray-700">Number Of Cards</span>
-                        <input type="number" name="no_of_card" value={addFormData.no_of_card} onChange={handleAddChange} className="mt-1 p-2 block w-full rounded border-gray-300" />
+                        <input type="number" name="no_of_card" value={formData.no_of_card} onChange={handleChange} className="mt-1 p-2 block w-full rounded border-gray-300" />
                         {errors.no_of_card && <p className="text-red-500 text-xs mt-1">{errors.no_of_card}</p>}
                       </label>
                       <label className="block">
                         <span className="text-gray-700">Purchase Date</span>
-                        <input type="date" name="purchase_date" value={addFormData.purchase_date} onChange={handleAddChange} className="mt-1 p-2 block w-full rounded border-gray-300" />
+                        <input type="date" name="purchase_date" value={formData.purchase_date} onChange={handleChange} className="mt-1 p-2 block w-full rounded border-gray-300" />
                         {errors.purchase_date && <p className="text-red-500 text-xs mt-1">{errors.purchase_date}</p>}
                       </label>
                       <label className="block">
                         <span className="text-gray-700">Card Received By</span>
-                        <input type="text" name="receive_by" value={addFormData.receive_by} onChange={handleAddChange} className="mt-1 p-2 block w-full rounded border-gray-300" />
+                        <input type="text" name="receive_by" value={formData.receive_by} onChange={handleChange} className="mt-1 p-2 block w-full rounded border-gray-300" />
                         {errors.receive_by && <p className="text-red-500 text-xs mt-1">{errors.receive_by}</p>}
                       </label>
                     </div>
 
                     <div className="mt-6 flex justify-end">
-                      <button type="submit" className="bg-blue-500 text-white px-7 py-3  rounded hover:bg-blue-600">Add Cards</button>
+                      <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                        {isEditMode ? 'Update' : 'Add'}
+                      </button>
                     </div>
                   </form>
                 </main>
@@ -368,10 +318,12 @@ const ShowDetials = (props) => {
             </div>
           </div>
         )}
+
+
       </div>
-      
+
       <button
-        onClick={() => { setShowAddModal(true) }}
+        onClick={() => { setShowModal(true) }}
         className="rounded-full fixed right-6 bottom-6 text-6xl"
       >
         <FaCirclePlus />
